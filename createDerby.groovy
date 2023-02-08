@@ -36,13 +36,16 @@ database.setInfo("DATASOURCEVERSION", dateStr);
 database.setInfo("DATATYPE", "nanomaterial");
 database.setInfo("SERIES", "nanomaterials");
 
+wikidataDS = DataSource.getExistingBySystemCode("Wd")
+
 ermDS = DataSource.register("Nmerm", "European Registry of Materials").asDataSource()
 nanomileDS = DataSource.register("Nmnm", "NanoMile").asDataSource()
+jrcDS = DataSource.register("Nmjrc", "Joint Research Center").asDataSource()
 
 def addXRef(GdbConstruct database, Xref ref, String node, DataSource source, Set identifiersDone, Set linkesDone, boolean isPrimary) {
    id = node.trim()
    if (id.length() > 0) {
-     // println "id($source): $id"
+     println "id($source): $id"
      ref2 = new Xref(id, source, isPrimary);
      if (!identifiersDone.contains(ref2.toString())) {
        if (database.addGene(ref2) != 0) {
@@ -86,7 +89,6 @@ new File("nanomile.csv").eachLine { line,number ->
 
   // add external identifiers
   ermID = fields[1].replaceAll("erm:","")
-  println ermID
   addXRef(database, ref, ermID, ermDS, identifiersDone, linksDone);
 
   counter++
@@ -95,6 +97,44 @@ new File("nanomile.csv").eachLine { line,number ->
     database.commit()
   }
 }
+
+// JRC
+counter = 0
+error = 0
+new File("jrc.csv").eachLine { line,number ->
+  if (line.trim().startsWith("#")) return; // skip comment lines
+  fields = line.split(",")
+  rootid = fields[0]
+  Xref ref = new Xref(rootid, jrcDS);
+  if (!identifiersDone.contains(ref.toString())) {
+    addError = database.addGene(ref);
+    if (addError != 0) println "Error (addGene): " + database.recentException().getMessage()
+    error += addError
+    linkError = database.addLink(ref,ref);
+    if (linkError != 0) println "Error (addLinkItself): " + database.recentException().getMessage()
+    error += linkError
+    identifiersDone.add(ref.toString())
+  }
+
+  // add external identifiers
+  wikidataID = fields[2]
+  if (wikidataID) {
+    addXRef(database, ref, wikidataID, wikidataDS, identifiersDone, linksDone);
+  }
+  if (fields.length>3) {
+    ermID = fields[3]
+    if (ermID) {
+      addXRef(database, ref, ermID, ermDS, identifiersDone, linksDone);
+    }
+  }
+
+  counter++
+  if (counter % commitInterval == 0) {
+    println "Info: errors: " + error + " (PubChem)"
+    database.commit()
+  }
+}
+
 
 database.commit();
 database.finalize();
