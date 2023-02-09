@@ -36,8 +36,9 @@ String dateStr = new SimpleDateFormat("yyyyMMdd").format(new Date());
 database.setInfo("BUILDDATE", dateStr);
 database.setInfo("DATASOURCENAME", "create-nanomaterial-mappings");
 database.setInfo("DATASOURCEVERSION", dateStr);
-database.setInfo("DATATYPE", "nanomaterial");
+database.setInfo("DATATYPE", "substance");
 database.setInfo("SERIES", "nanomaterials");
+database.setInfo("BRIDGEDBVERSION", "3.0.19");
 
 wikidataDS = DataSource.getExistingBySystemCode("Wd")
 ermDS = DataSource.getExistingBySystemCode("Nmerm")
