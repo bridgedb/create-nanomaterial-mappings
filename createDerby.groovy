@@ -1,7 +1,10 @@
-@Grab(group='org.bridgedb', module='org.bridgedb', version='3.0.18')
-@Grab(group='org.bridgedb', module='org.bridgedb.bio', version='3.0.18')
-@Grab(group='org.bridgedb', module='org.bridgedb.rdb', version='3.0.18')
-@Grab(group='org.bridgedb', module='org.bridgedb.rdb.construct', version='3.0.18')
+# Copyright (C) 2023 Egon Willighagen <0000-0001-7542-0286@orcid.org>
+# MIT license
+
+@Grab(group='org.bridgedb', module='org.bridgedb', version='3.0.19')
+@Grab(group='org.bridgedb', module='org.bridgedb.bio', version='3.0.19')
+@Grab(group='org.bridgedb', module='org.bridgedb.rdb', version='3.0.19')
+@Grab(group='org.bridgedb', module='org.bridgedb.rdb.construct', version='3.0.19')
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -37,15 +40,14 @@ database.setInfo("DATATYPE", "nanomaterial");
 database.setInfo("SERIES", "nanomaterials");
 
 wikidataDS = DataSource.getExistingBySystemCode("Wd")
-
-ermDS = DataSource.register("Nmerm", "European Registry of Materials").asDataSource()
-nanomileDS = DataSource.register("Nmnm", "NanoMile").asDataSource()
-jrcDS = DataSource.register("Nmjrc", "Joint Research Center").asDataSource()
+ermDS = DataSource.getExistingBySystemCode("Nmerm")
+nanomileDS = DataSource.getExistingBySystemCode("Nmnm")
+jrcDS = DataSource.getExistingBySystemCode("Nmjrc")
 
 def addXRef(GdbConstruct database, Xref ref, String node, DataSource source, Set identifiersDone, Set linkesDone, boolean isPrimary) {
    id = node.trim()
    if (id.length() > 0) {
-     println "id($source): $id"
+     // println "id($source): $id"
      ref2 = new Xref(id, source, isPrimary);
      if (!identifiersDone.contains(ref2.toString())) {
        if (database.addGene(ref2) != 0) {
