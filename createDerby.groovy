@@ -1,5 +1,5 @@
-# Copyright (C) 2023 Egon Willighagen <0000-0001-7542-0286@orcid.org>
-# MIT license
+// Copyright (C) 2023 Egon Willighagen <0000-0001-7542-0286@orcid.org>
+// MIT license
 
 @Grab(group='org.bridgedb', module='org.bridgedb', version='3.0.19')
 @Grab(group='org.bridgedb', module='org.bridgedb.bio', version='3.0.19')
